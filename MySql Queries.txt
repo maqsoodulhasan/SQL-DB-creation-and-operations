@@ -1,0 +1,103 @@
+# Maqsood-ul Hasan
+drop database maqsood;
+create database maqsood;
+use maqsood;
+
+CREATE TABLE Player (
+    PNo char (13) ,
+    PName varchar(30),
+    age int,
+    primary key (PNo)
+)engine=InnoDB;
+    
+    CREATE TABLE Jacka (
+	PNo varchar (13),
+    brand varchar(30),
+    size varchar(20),
+    material varchar(30),
+    primary key (PNo,brand),
+    foreign key (PNo) references Player (PNo)
+)engine=InnoDB;
+
+CREATE TABLE Competition (
+	CName varchar(30),
+    Cdate date ,
+    PNo varchar(13),
+	PRIMARY KEY (CName),
+    foreign key (PNo) references Player (PNo)
+   )engine = InnoDB;
+   
+    CREATE TABLE Construction (
+	ConstructNo int (10) ,
+    hardlevel varchar (10),
+	PRIMARY KEY (ConstructNo)  
+   )engine = InnoDB;
+   
+    CREATE TABLE Klubba (
+	KNo int,
+    Kmaterial varchar (20),
+    PNo varchar (13),
+    ConstructNo int (10),
+    PRIMARY KEY (KNo),
+    FOREIGN KEY (ConstructNo) REFERENCES Construction(ConstructNo),
+	foreign key (PNo) references Player (PNo)
+   );
+   
+  CREATE TABLE Rain (
+	daydate DATE,
+    airspeed varchar (10),
+    typerain varchar (20),
+    PRIMARY KEY (daydate)
+   )engine = InnoDB;  
+   
+  #==================================== operations queries=============
+ use maqsood;
+# 1. Hämta ålder för spelaren Johan Andersson
+select age from player where PName = "Johan Andersson";
+
+# 2. Hämta datum för tävlingen Big Golf Cup Skövde.
+select Cdate from competition where CName = "Big Golf Cup Skövde";
+
+# 3. Hämta materialet för Johan Anderssons klubba.
+SELECT Kmaterial
+FROM klubba k
+INNER JOIN player p ON k.PNo = p.PNo 
+where PName = "Johan Andersson";
+
+#4. Hämta alla jackor som tillhör Johan Andersson.
+select *
+from jacka j
+inner join player p on j.PNo = p.PNo 
+where PName =  "Johan Andersson";
+
+#5. Hämta alla spelare som deltog i Big Golf Cup Skövde.
+select PName from player p 
+inner join competition c on p.PNo = c.PNo
+where CName = "Big Golf Cup Skövde"; 
+
+#6. Hämta regnens vindstyrka för Big Golf Cup Skövde.
+select airspeed from rain r
+inner join competition c on r.daydate = c.Cdate
+where CName = "Big Golf Cup Skövde"; 
+
+#7. Hämta alla spelare som är under 30 år.
+select PName from player where age < 30 ;
+
+#8. Ta bort Johan Anderssons jackor.
+DELETE FROM jacka 
+where PNo = (select PNo from player where PName = "Johan Andersson"); 
+
+#9. Ta bort Nicklas Jansson.
+DELETE from player 
+where PName = "Nicklas Jansson";
+
+#10. Hämta medelåldern för alla spelare.
+SELECT 
+    AVG(age) 'Average age'
+FROM
+    player;
+
+   
+   
+   
+   
